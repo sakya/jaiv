@@ -54,7 +54,7 @@ public partial class ImageControl : UserControl
             } else {
                 var tempImage = await SixLabors.ImageSharp.Image.LoadAsync(fs);
                 using var ms = new MemoryStream();
-                await tempImage.SaveAsPngAsync(ms);
+                await Task.Run(() => tempImage.SaveAsPng(ms));
                 ms.Seek(0, SeekOrigin.Begin);
                 _bitmap = await Task.Run(() => new Bitmap(ms));
             }
