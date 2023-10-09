@@ -15,7 +15,7 @@
         <Grid Name="Toolbar">
             <Grid.ColumnDefinitions>*, Auto</Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal">
-                <Button Click="OnOpenClick" ToolTip.Tip="Open file">
+                <Button Click="OnOpenClick" ToolTip.Tip="Open file (O)">
                     <i:Icon FontSize="21" Value="mdi-folder-open" />
                 </Button>
                 <Button Click="OnFitImageClick" ToolTip.Tip="Fit to window (W)"

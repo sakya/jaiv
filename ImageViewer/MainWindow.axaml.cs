@@ -26,6 +26,10 @@ public partial class MainWindow : Window
     private async void OnKeyDown(object? sender, KeyEventArgs e)
     {
         switch (e.Key) {
+            case Key.O:
+                e.Handled = true;
+                await OpenFile();
+                break;
             case Key.Home:
                 e.Handled = true;
                 await FirstImage();
@@ -206,13 +210,7 @@ public partial class MainWindow : Window
         Toolbar.IsVisible = WindowState != WindowState.FullScreen;
     }
 
-    private void SetInfo()
-    {
-        Title = Path.GetFileName(ImageControl.Filename);
-        SizeText.Text = $"{Math.Round(ImageControl.Zoom * 100, 1)}%";
-    }
-
-    private async void OnOpenClick(object? sender, RoutedEventArgs e)
+    private async Task OpenFile()
     {
         var opt = new FilePickerOpenOptions()
         {
@@ -240,6 +238,17 @@ public partial class MainWindow : Window
             await LoadImage(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
             SetInfo();
         }
+    }
+
+    private void SetInfo()
+    {
+        Title = Path.GetFileName(ImageControl.Filename);
+        SizeText.Text = $"{Math.Round(ImageControl.Zoom * 100, 1)}%";
+    }
+
+    private async void OnOpenClick(object? sender, RoutedEventArgs e)
+    {
+        await OpenFile();
     }
 
     private async void OnZoomOutClick(object? sender, RoutedEventArgs e)
