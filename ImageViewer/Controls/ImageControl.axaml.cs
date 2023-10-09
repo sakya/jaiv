@@ -12,7 +12,7 @@ namespace ImageViewer.Controls;
 public partial class ImageControl : UserControl
 {
     private Bitmap? _bitmap;
-    public static HashSet<string> _supportedByBitmap { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png" };
+    private static HashSet<string> SupportedByBitmap { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png" };
 
     public ImageControl()
     {
@@ -49,7 +49,7 @@ public partial class ImageControl : UserControl
 
         try {
             await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-            if (_supportedByBitmap.Contains(fi.Extension.ToLower())) {
+            if (SupportedByBitmap.Contains(fi.Extension.ToLower())) {
                 _bitmap = await Task.Run(() => new Bitmap(fs));
             } else {
                 var tempImage = await SixLabors.ImageSharp.Image.LoadAsync(fs);
