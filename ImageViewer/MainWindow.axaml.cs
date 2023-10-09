@@ -35,10 +35,12 @@ public partial class MainWindow : Window
                 await LastImage();
                 break;
             case Key.Left:
+            case Key.PageUp:
                 e.Handled = true;
                 await PreviousImage();
                 break;
             case Key.Right:
+            case Key.PageDown:
                 e.Handled = true;
                 await NextImage();
                 break;
