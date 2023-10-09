@@ -71,6 +71,15 @@ public partial class MainWindow : Window
         }
     }
 
+    private async Task LoadImage(string filename)
+    {
+        try {
+            await ImageControl.LoadImage(filename);
+        } catch {
+            // ignored
+        }
+    }
+
     private async Task ZoomIn()
     {
         var zoom = ImageControl.Zoom;
@@ -110,7 +119,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx >= 0 && idx + 1 < files.Count) {
-            await ImageControl.LoadImage(files[idx + 1]);
+            await LoadImage(files[idx + 1]);
             SetInfo();
         }
     }
@@ -128,7 +137,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx > 0) {
-            await ImageControl.LoadImage(files[idx - 1]);
+            await LoadImage(files[idx - 1]);
             SetInfo();
         }
     }
@@ -146,7 +155,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx > 0) {
-            await ImageControl.LoadImage(files[0]);
+            await LoadImage(files[0]);
             SetInfo();
         }
     }
@@ -164,7 +173,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx < files.Count - 1) {
-            await ImageControl.LoadImage(files[files.Count - 1]);
+            await LoadImage(files[files.Count - 1]);
             SetInfo();
         }
     }
@@ -175,7 +184,7 @@ public partial class MainWindow : Window
 
         var files = Directory.GetFiles(path);
         foreach (var file in files) {
-            var ext = Path.GetExtension(file);
+            var ext = Path.GetExtension(file).ToLower();
             if (ImageControl.SupportedFiles.Contains(ext)) {
                 res.Add(file);
             }
@@ -228,7 +237,7 @@ public partial class MainWindow : Window
         var files = await StorageProvider.OpenFilePickerAsync(opt);
 
         if (files.Count > 0) {
-            await ImageControl.LoadImage(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
+            await LoadImage(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
             SetInfo();
         }
     }

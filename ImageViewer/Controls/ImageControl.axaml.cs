@@ -5,30 +5,19 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using Avalonia.Reactive;
+using SixLabors.ImageSharp;
 
 namespace ImageViewer.Controls;
 
 public partial class ImageControl : UserControl
 {
     private Bitmap? _bitmap;
+    public static HashSet<string> _supportedByBitmap { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png" };
 
     public ImageControl()
     {
         InitializeComponent();
         ResizeQuality = BitmapInterpolationMode.HighQuality;
-
-        /*var bounds = this.GetObservable(Canvas.BoundsProperty);
-        bounds.Subscribe(new AnonymousObserver<Rect>(async value =>
-        {
-            if (_bitmap == null)
-                return;
-            Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
-            if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
-                Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
-
-            await SetZoomedBitmap();
-        }));*/
     }
 
     public BitmapInterpolationMode ResizeQuality
@@ -37,7 +26,7 @@ public partial class ImageControl : UserControl
         set;
     }
 
-    public static HashSet<string> SupportedFiles { get; } = new() { ".jpg", ".jpeg", ".png" };
+    public static HashSet<string> SupportedFiles { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png", ".tiff", ".tga", ".webp" };
 
     public double Zoom { get; private set; } = 1.0;
 
@@ -58,16 +47,32 @@ public partial class ImageControl : UserControl
             _bitmap = null;
         }
 
-        await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-        _bitmap = await Task.Run(() => new Bitmap(fs));
-        Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
-        if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
-            Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
+        try {
+            await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+            if (_supportedByBitmap.Contains(fi.Extension.ToLower())) {
+                _bitmap = await Task.Run(() => new Bitmap(fs));
+            } else {
+                var tempImage = await SixLabors.ImageSharp.Image.LoadAsync(fs);
+                using var ms = new MemoryStream();
+                await tempImage.SaveAsPngAsync(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                _bitmap = await Task.Run(() => new Bitmap(ms));
+            }
 
-        await SetZoomedBitmap();
-        Filename = filename;
-        Spinner.IsVisible = false;
+            Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
+            if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
+                Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
 
+            await SetZoomedBitmap();
+        } catch {
+            if (Image.Source is Bitmap bmp)
+                bmp.Dispose();
+            Image.Source = null;
+            throw;
+        } finally {
+            Filename = filename;
+            Spinner.IsVisible = false;
+        }
         return true;
     }
 
