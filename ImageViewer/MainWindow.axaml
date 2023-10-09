@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="https://github.com/projektanker/icons.avalonia"
+        xmlns:controls="clr-namespace:ImageViewer.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="ImageViewer.MainWindow"
+        Width="600"
+        Height="800"
+        WindowStartupLocation="CenterScreen"
+        Title="Jaiv">
+    <Grid>
+        <Grid.RowDefinitions>Auto,*</Grid.RowDefinitions>
+        <Grid Name="Toolbar">
+            <Grid.ColumnDefinitions>*, Auto</Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Button Click="OnOpenClick" ToolTip.Tip="Open file">
+                    <i:Icon FontSize="21" Value="mdi-folder-open" />
+                </Button>
+                <Button Click="OnFitImageClick" ToolTip.Tip="Fit to window (W)">
+                    <i:Icon FontSize="21" Value="mdi-fit-to-screen" />
+                </Button>
+                <Button Click="OnFullscreenClick" ToolTip.Tip="Fullscreen (F)">
+                    <i:Icon FontSize="21" Value="mdi-fullscreen" />
+                </Button>
+                <Button Click="OnZoomOutClick" ToolTip.Tip="Zoom out (-)">
+                    <i:Icon FontSize="21" Value="mdi-magnify-minus" />
+                </Button>
+                <Button Click="OnZoomInClick" ToolTip.Tip="Zoom in (+)">
+                    <i:Icon FontSize="21" Value="mdi-magnify-plus" />
+                </Button>
+            </StackPanel>
+
+            <TextBlock Grid.Column="1" Name="SizeText"
+                       VerticalAlignment="Center"/>
+        </Grid>
+
+        <controls:ImageControl
+            Name="ImageControl"
+            Grid.Row="1" />
+    </Grid>
+</Window>

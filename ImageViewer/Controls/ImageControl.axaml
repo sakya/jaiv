@@ -1,0 +1,26 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ImageViewer.Controls.ImageControl">
+    <Grid>
+        <ScrollViewer Name="ScrollViewer"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto">
+            <Image Name="Image" Stretch="Uniform"
+                   ClipToBounds="True"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+        </ScrollViewer>
+
+        <i:Icon Value="mdi-progress-helper"
+                Name="Spinner"
+                IsVisible="False"
+                FontSize="48"
+                Animation="Spin"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"/>
+    </Grid>
+</UserControl>
