@@ -84,19 +84,19 @@ public partial class MainWindow : Window
         }
     }
 
-    private async Task ZoomIn()
+    private async Task ZoomIn(int multiplier = 1)
     {
         var zoom = ImageControl.Zoom;
-        zoom += 0.01;
+        zoom += 0.01 * multiplier;
         zoom = Math.Round(zoom, 2);
         await ImageControl.SetZoom(zoom);
         SetInfo();
     }
 
-    private async Task ZoomOut()
+    private async Task ZoomOut(int multiplier = 1)
     {
         var zoom = ImageControl.Zoom;
-        zoom -= 0.01;
+        zoom -= 0.01 * multiplier;
         if (zoom < 0.01)
             zoom = 0.01;
         zoom = Math.Round(zoom, 2);
