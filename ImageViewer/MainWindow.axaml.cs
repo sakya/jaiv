@@ -270,4 +270,14 @@ public partial class MainWindow : Window
     {
         ToggleFullscreen();
     }
+
+    private async void OnPreviousClick(object? sender, RoutedEventArgs e)
+    {
+        await PreviousImage();
+    }
+
+    private async void OnNextClick(object? sender, RoutedEventArgs e)
+    {
+        await NextImage();
+    }
 }

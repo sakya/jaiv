@@ -31,6 +31,7 @@
                         <Button Click="OnOpenClick" ToolTip.Tip="Open file (O)">
                             <i:Icon FontSize="21" Value="mdi-folder-open" />
                         </Button>
+
                         <Button Click="OnFitImageClick" ToolTip.Tip="Fit to window (W)"
                                 Margin="5,0,0,0">
                             <i:Icon FontSize="21" Value="mdi-fit-to-screen" />
@@ -38,12 +39,21 @@
                         <Button Click="OnFullscreenClick" ToolTip.Tip="Fullscreen (F)">
                             <i:Icon FontSize="21" Value="mdi-fullscreen" />
                         </Button>
+
                         <Button Click="OnZoomOutClick" ToolTip.Tip="Zoom out (-)"
                                 Margin="5,0,0,0">
                             <i:Icon FontSize="21" Value="mdi-magnify-minus" />
                         </Button>
                         <Button Click="OnZoomInClick" ToolTip.Tip="Zoom in (+)">
                             <i:Icon FontSize="21" Value="mdi-magnify-plus" />
+                        </Button>
+
+                        <Button Click="OnPreviousClick" ToolTip.Tip="Previous image (left arrow)"
+                                Margin="5,0,0,0">
+                            <i:Icon FontSize="21" Value="mdi-skip-previous" />
+                        </Button>
+                        <Button Click="OnNextClick" ToolTip.Tip="Next image (right arrow)">
+                            <i:Icon FontSize="21" Value="mdi-skip-next" />
                         </Button>
                     </StackPanel>
 
