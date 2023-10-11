@@ -92,6 +92,8 @@ public partial class MainWindow : Window
 
     private async Task ZoomIn(int multiplier = 1)
     {
+        if (string.IsNullOrEmpty(ImageControl.Filename))
+            return;
         var zoom = ImageControl.Zoom;
         zoom += 0.01 * multiplier;
         zoom = Math.Round(zoom, 2);
@@ -101,6 +103,8 @@ public partial class MainWindow : Window
 
     private async Task ZoomOut(int multiplier = 1)
     {
+        if (string.IsNullOrEmpty(ImageControl.Filename))
+            return;
         var zoom = ImageControl.Zoom;
         zoom -= 0.01 * multiplier;
         if (zoom < 0.01)
@@ -112,6 +116,8 @@ public partial class MainWindow : Window
 
     private async Task FitImage()
     {
+        if (string.IsNullOrEmpty(ImageControl.Filename))
+            return;
         await ImageControl.FitImage();
         _model.Zoom = ImageControl.Zoom;
     }
