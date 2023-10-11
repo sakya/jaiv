@@ -81,7 +81,10 @@ public partial class MainWindow : Window
     private async Task LoadImage(string filename)
     {
         try {
+            _model.Filename = $"Jaiv [{Path.GetFileName(filename)}]";
             await ImageControl.LoadImage(filename);
+            _model.DisplayingImage = true;
+            _model.Zoom = ImageControl.Zoom;
         } catch {
             // ignored
         }
@@ -235,10 +238,6 @@ public partial class MainWindow : Window
 
         if (files.Count > 0) {
             await LoadImage(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
-
-            _model.Filename = Path.GetFileName(ImageControl.Filename);
-            _model.DisplayingImage = true;
-            _model.Zoom = ImageControl.Zoom;
         }
     }
 
