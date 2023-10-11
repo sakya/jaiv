@@ -4,13 +4,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="https://github.com/projektanker/icons.avalonia"
         xmlns:controls="clr-namespace:ImageViewer.Controls"
+        xmlns:models="clr-namespace:ImageViewer.ViewModels"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="ImageViewer.MainWindow"
+        x:DataType="models:MainWindowModel"
         Icon="/Assets/icon.ico"
         Width="600" Height="800"
         MinWidth="400" MinHeight="400"
         WindowStartupLocation="CenterScreen"
-        Title="Jaiv">
+        Title="{Binding Filename}">
+
     <Panel>
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>
@@ -33,31 +36,38 @@
                         </Button>
 
                         <Button Click="OnFitImageClick" ToolTip.Tip="Fit to window (W)"
+                                IsEnabled="{Binding DisplayingImage}"
                                 Margin="5,0,0,0">
                             <i:Icon FontSize="21" Value="mdi-fit-to-screen" />
                         </Button>
-                        <Button Click="OnFullscreenClick" ToolTip.Tip="Fullscreen (F)">
+                        <Button Click="OnFullscreenClick" ToolTip.Tip="Fullscreen (F)"
+                                IsEnabled="{Binding DisplayingImage}">
                             <i:Icon FontSize="21" Value="mdi-fullscreen" />
                         </Button>
 
                         <Button Click="OnZoomOutClick" ToolTip.Tip="Zoom out (-)"
+                                IsEnabled="{Binding DisplayingImage}"
                                 Margin="5,0,0,0">
                             <i:Icon FontSize="21" Value="mdi-magnify-minus" />
                         </Button>
-                        <Button Click="OnZoomInClick" ToolTip.Tip="Zoom in (+)">
+                        <Button Click="OnZoomInClick" ToolTip.Tip="Zoom in (+)"
+                                IsEnabled="{Binding DisplayingImage}">
                             <i:Icon FontSize="21" Value="mdi-magnify-plus" />
                         </Button>
 
                         <Button Click="OnPreviousClick" ToolTip.Tip="Previous image (left arrow)"
+                                IsEnabled="{Binding DisplayingImage}"
                                 Margin="5,0,0,0">
                             <i:Icon FontSize="21" Value="mdi-skip-previous" />
                         </Button>
-                        <Button Click="OnNextClick" ToolTip.Tip="Next image (right arrow)">
+                        <Button Click="OnNextClick" ToolTip.Tip="Next image (right arrow)"
+                                IsEnabled="{Binding DisplayingImage}">
                             <i:Icon FontSize="21" Value="mdi-skip-next" />
                         </Button>
                     </StackPanel>
 
-                    <TextBlock Grid.Column="1" Name="SizeText"
+                    <TextBlock Grid.Column="1"
+                               Text="{Binding Zoom, StringFormat={}{0:0.0%}}"
                                VerticalAlignment="Center"/>
                 </Grid>
 

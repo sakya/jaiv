@@ -9,17 +9,20 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using ImageViewer.Controls;
+using ImageViewer.ViewModels;
 
 namespace ImageViewer;
 
 public partial class MainWindow : Window
 {
     private WindowState? _windowState;
+    private readonly MainWindowModel _model = new() { Filename = "Jaiv" };
 
     public MainWindow()
     {
         InitializeComponent();
 
+        DataContext = _model;
         KeyDown += OnKeyDown;
     }
 
@@ -90,7 +93,7 @@ public partial class MainWindow : Window
         zoom += 0.01 * multiplier;
         zoom = Math.Round(zoom, 2);
         await ImageControl.SetZoom(zoom);
-        SetInfo();
+        _model.Zoom = ImageControl.Zoom;
     }
 
     private async Task ZoomOut(int multiplier = 1)
@@ -101,13 +104,13 @@ public partial class MainWindow : Window
             zoom = 0.01;
         zoom = Math.Round(zoom, 2);
         await ImageControl.SetZoom(zoom);
-        SetInfo();
+        _model.Zoom = ImageControl.Zoom;
     }
 
     private async Task FitImage()
     {
         await ImageControl.FitImage();
-        SetInfo();
+        _model.Zoom = ImageControl.Zoom;
     }
 
     private async Task NextImage()
@@ -124,7 +127,6 @@ public partial class MainWindow : Window
         var idx = files.IndexOf(filename);
         if (idx >= 0 && idx + 1 < files.Count) {
             await LoadImage(files[idx + 1]);
-            SetInfo();
         }
     }
 
@@ -142,7 +144,6 @@ public partial class MainWindow : Window
         var idx = files.IndexOf(filename);
         if (idx > 0) {
             await LoadImage(files[idx - 1]);
-            SetInfo();
         }
     }
 
@@ -160,7 +161,6 @@ public partial class MainWindow : Window
         var idx = files.IndexOf(filename);
         if (idx > 0) {
             await LoadImage(files[0]);
-            SetInfo();
         }
     }
 
@@ -178,7 +178,6 @@ public partial class MainWindow : Window
         var idx = files.IndexOf(filename);
         if (idx < files.Count - 1) {
             await LoadImage(files[files.Count - 1]);
-            SetInfo();
         }
     }
 
@@ -236,14 +235,11 @@ public partial class MainWindow : Window
 
         if (files.Count > 0) {
             await LoadImage(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
-            SetInfo();
-        }
-    }
 
-    private void SetInfo()
-    {
-        Title = Path.GetFileName(ImageControl.Filename);
-        SizeText.Text = $"{Math.Round(ImageControl.Zoom * 100, 1)}%";
+            _model.Filename = Path.GetFileName(ImageControl.Filename);
+            _model.DisplayingImage = true;
+            _model.Zoom = ImageControl.Zoom;
+        }
     }
 
     private async void OnOpenClick(object? sender, RoutedEventArgs e)
