@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -280,5 +281,17 @@ public partial class MainWindow : Window
     private async void OnNextClick(object? sender, RoutedEventArgs e)
     {
         await NextImage();
+    }
+
+    private void OnGridViewIsCheckedChanged(object? sender, RoutedEventArgs e)
+    {
+        if (sender is ToggleButton btn) {
+            var dir = Path.GetDirectoryName(ImageControl.Filename);
+            if (string.IsNullOrEmpty(dir))
+                return;
+
+            ImageListControl.SetPath(dir);
+            _model.ShowFolder = btn.IsChecked == true;
+        }
     }
 }

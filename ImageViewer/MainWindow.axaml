@@ -45,6 +45,12 @@
                             <i:Icon FontSize="21" Value="mdi-fullscreen" />
                         </Button>
 
+                        <ToggleButton IsCheckedChanged="OnGridViewIsCheckedChanged" ToolTip.Tip="Toggle grid view"
+                                      IsEnabled="{Binding DisplayingImage}"
+                                      Margin="5,0,0,0">
+                            <i:Icon FontSize="21" Value="mdi-view-grid" />
+                        </ToggleButton>
+
                         <Button Click="OnZoomOutClick" ToolTip.Tip="Zoom out (-)"
                                 IsEnabled="{Binding DisplayingImage}"
                                 Margin="5,0,0,0">
@@ -73,7 +79,13 @@
 
                 <controls:ImageControl
                     Name="ImageControl"
+                    IsVisible="{Binding !ShowFolder}"
                     Grid.Row="1" />
+
+                <controls:ImageListControl
+                    Name="ImageListControl"
+                    IsVisible="{Binding ShowFolder}"
+                    Grid.Row="1"/>
             </Grid>
         </DockPanel>
     </Panel>

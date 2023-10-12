@@ -10,13 +10,16 @@
                       Focusable="False"
                       HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <ItemsRepeater Name="WrapPanel"
-                           ElementPrepared="OnElementPrepared">
+                           ElementPrepared="OnElementPrepared"
+                           ElementClearing="OnElementClearing">
                 <ItemsRepeater.Layout>
-                    <UniformGridLayout Orientation="Horizontal" />
+                    <UniformGridLayout Orientation="Horizontal" ItemsStretch="Uniform" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <controls:ImageControl />
+                        <controls:ImageControl Margin="5"
+                                               MinWidth="200"
+                                               MinHeight="200"/>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

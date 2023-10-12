@@ -76,6 +76,18 @@ public partial class ImageControl : UserControl
         return true;
     }
 
+    public void Clear()
+    {
+        Filename = null;
+        if (_bitmap != null) {
+            _bitmap.Dispose();
+            _bitmap = null;
+        }
+        if (Image.Source is Bitmap bmp)
+            bmp.Dispose();
+        Image.Source = null;
+    }
+
     public async Task SetZoom(double zoom, bool center = true)
     {
         Zoom = zoom;

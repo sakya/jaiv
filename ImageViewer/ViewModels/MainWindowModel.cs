@@ -22,4 +22,12 @@ public class MainWindowModel : BaseModel
         get => _zoom;
         set => SetField(ref _zoom, value);
     }
+
+    private bool _showFolder;
+    public bool ShowFolder
+    {
+        get => _showFolder;
+        set => SetField(ref _showFolder, value);
+    }
+
 }
