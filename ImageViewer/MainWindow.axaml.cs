@@ -29,53 +29,56 @@ public partial class MainWindow : Window
 
     private async void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        switch (e.Key) {
-            case Key.O:
-                e.Handled = true;
-                await OpenFile();
-                break;
-            case Key.Home:
-                e.Handled = true;
-                await FirstImage();
-                break;
-            case Key.End:
-                e.Handled = true;
-                await LastImage();
-                break;
-            case Key.Left:
-            case Key.PageUp:
-                e.Handled = true;
-                await PreviousImage();
-                break;
-            case Key.Right:
-            case Key.PageDown:
-                e.Handled = true;
-                await NextImage();
-                break;
+        if (!_model.ShowFolder) {
+            switch (e.Key) {
+                case Key.O:
+                    e.Handled = true;
+                    await OpenFile();
+                    break;
+                case Key.Home:
+                    e.Handled = true;
+                    await FirstImage();
+                    break;
+                case Key.End:
+                    e.Handled = true;
+                    await LastImage();
+                    break;
+                case Key.Left:
+                case Key.PageUp:
+                    e.Handled = true;
+                    await PreviousImage();
+                    break;
+                case Key.Right:
+                case Key.PageDown:
+                    e.Handled = true;
+                    await NextImage();
+                    break;
 
-            case Key.F:
-                e.Handled = true;
-                ToggleFullscreen();
-                break;
-            case Key.Escape:
-                if (WindowState == WindowState.FullScreen) {
+                case Key.F:
                     e.Handled = true;
                     ToggleFullscreen();
-                }
-                break;
+                    break;
+                case Key.Escape:
+                    if (WindowState == WindowState.FullScreen) {
+                        e.Handled = true;
+                        ToggleFullscreen();
+                    }
 
-            case Key.OemPlus:
-                e.Handled = true;
-                await ZoomIn();
-                break;
-            case Key.OemMinus:
-                e.Handled = true;
-                await ZoomOut();
-                break;
-            case Key.W:
-                e.Handled = true;
-                await FitImage();
-                break;
+                    break;
+
+                case Key.OemPlus:
+                    e.Handled = true;
+                    await ZoomIn();
+                    break;
+                case Key.OemMinus:
+                    e.Handled = true;
+                    await ZoomOut();
+                    break;
+                case Key.W:
+                    e.Handled = true;
+                    await FitImage();
+                    break;
+            }
         }
     }
 

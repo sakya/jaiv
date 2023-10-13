@@ -74,6 +74,7 @@
 
                     <TextBlock Grid.Column="1"
                                Text="{Binding Zoom, StringFormat={}{0:0.0%}}"
+                               IsVisible="{Binding !ShowFolder}"
                                VerticalAlignment="Center"/>
                 </Grid>
 

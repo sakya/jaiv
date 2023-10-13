@@ -13,13 +13,13 @@
                            ElementPrepared="OnElementPrepared"
                            ElementClearing="OnElementClearing">
                 <ItemsRepeater.Layout>
-                    <UniformGridLayout Orientation="Horizontal" ItemsStretch="Uniform" />
+                    <UniformGridLayout Orientation="Horizontal" ItemsStretch="Uniform"
+                                       MinItemHeight="200" MinItemWidth="200"
+                                       MinColumnSpacing="10" MinRowSpacing="10"/>
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <controls:ImageControl Margin="5"
-                                               MinWidth="200"
-                                               MinHeight="200"/>
+                        <controls:ImageControl Mode="Grid"/>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

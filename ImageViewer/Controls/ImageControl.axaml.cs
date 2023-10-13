@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using SixLabors.ImageSharp;
 
@@ -12,18 +15,44 @@ namespace ImageViewer.Controls;
 public partial class ImageControl : UserControl
 {
     private Bitmap? _bitmap;
+    private readonly SemaphoreSlim _bitmapSemaphore = new SemaphoreSlim(1, 1);
     private static HashSet<string> SupportedByBitmap { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png" };
+
+    private Modes _mode = Modes.Image;
+    public enum Modes
+    {
+        Image,
+        Grid
+    }
 
     public ImageControl()
     {
         InitializeComponent();
         ResizeQuality = BitmapInterpolationMode.HighQuality;
+        Mode = Modes.Image;
     }
 
     public BitmapInterpolationMode ResizeQuality
     {
         get;
         set;
+    }
+
+    public Modes Mode
+    {
+        get => _mode;
+        set
+        {
+            _mode = value;
+            if (_mode == Modes.Grid) {
+                Image.Stretch = Stretch.Uniform;
+                ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+            } else {
+                ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
+                ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            }
+        }
     }
 
     public static HashSet<string> SupportedFiles { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png", ".tiff", ".tga", ".webp" };
@@ -37,6 +66,7 @@ public partial class ImageControl : UserControl
         if (!File.Exists(filename))
             return false;
 
+        await _bitmapSemaphore.WaitAsync();
         var fi = new FileInfo(filename);
         filename = fi.FullName;
 
@@ -59,11 +89,19 @@ public partial class ImageControl : UserControl
                 _bitmap = await Task.Run(() => new Bitmap(ms));
             }
 
-            Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
-            if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
-                Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
+            if (Mode == Modes.Image) {
+                Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
+                if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
+                    Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
 
-            await SetZoomedBitmap();
+                await SetZoomedBitmap();
+            } else {
+                var ratio = _bitmap.Size.Width / _bitmap.Size.Height;
+                Image.Source = await Task.Run(() => _bitmap.CreateScaledBitmap(new PixelSize(800, (int)Math.Round(800 / ratio, 0)), ResizeQuality));
+
+                _bitmap.Dispose();
+                _bitmap = null;
+            }
         } catch {
             if (Image.Source is Bitmap bmp)
                 bmp.Dispose();
@@ -72,17 +110,21 @@ public partial class ImageControl : UserControl
         } finally {
             Filename = filename;
             Spinner.IsVisible = false;
+            _bitmapSemaphore.Release();
         }
         return true;
     }
 
-    public void Clear()
+    public async Task Clear()
     {
         Filename = null;
+        await _bitmapSemaphore.WaitAsync();
         if (_bitmap != null) {
             _bitmap.Dispose();
             _bitmap = null;
         }
+        _bitmapSemaphore.Release();
+
         if (Image.Source is Bitmap bmp)
             bmp.Dispose();
         Image.Source = null;

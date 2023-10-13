@@ -42,10 +42,10 @@ public partial class ImageListControl : UserControl
         }
     }
 
-    private void OnElementClearing(object? sender, ItemsRepeaterElementClearingEventArgs e)
+    private async void OnElementClearing(object? sender, ItemsRepeaterElementClearingEventArgs e)
     {
         if (e.Element is ImageControl img) {
-            img.Clear();
+            await img.Clear();
         }
     }
 }
