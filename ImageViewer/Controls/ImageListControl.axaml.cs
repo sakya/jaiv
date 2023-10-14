@@ -15,6 +15,8 @@ public partial class ImageListControl : UserControl
 
     public void SetPath(string path)
     {
+        WrapPanel.ItemsSource = null;
+        ScrollViewer.ScrollToHome();
         LoadImages(path);
     }
 

@@ -14,8 +14,10 @@ namespace ImageViewer.Controls;
 
 public partial class ImageControl : UserControl
 {
+    private static readonly SemaphoreSlim GlobalBitmapSemaphore = new(3, 3);
+
     private Bitmap? _bitmap;
-    private readonly SemaphoreSlim _bitmapSemaphore = new SemaphoreSlim(1, 1);
+    private readonly SemaphoreSlim _bitmapSemaphore = new(1, 1);
     private static HashSet<string> SupportedByBitmap { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png" };
 
     private Modes _mode = Modes.Image;
@@ -30,6 +32,7 @@ public partial class ImageControl : UserControl
         InitializeComponent();
         ResizeQuality = BitmapInterpolationMode.HighQuality;
         Mode = Modes.Image;
+        ShowSpinner = true;
     }
 
     public BitmapInterpolationMode ResizeQuality
@@ -55,6 +58,18 @@ public partial class ImageControl : UserControl
         }
     }
 
+    public bool ShowSpinner
+    {
+        get;
+        set;
+    }
+
+    public double SpinnerFontSize
+    {
+        get => Spinner.FontSize;
+        set => Spinner.FontSize = value;
+    }
+
     public static HashSet<string> SupportedFiles { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png", ".tiff", ".tga", ".webp" };
 
     public double Zoom { get; private set; } = 1.0;
@@ -66,27 +81,41 @@ public partial class ImageControl : UserControl
         if (!File.Exists(filename))
             return false;
 
+        if (ShowSpinner)
+            Spinner.IsVisible = true;
+        await Task.Delay(1);
+        if (Image.Source is Bitmap iBmp)
+            iBmp.Dispose();
+        Image.Source = null;
+
+        await GlobalBitmapSemaphore.WaitAsync();
         await _bitmapSemaphore.WaitAsync();
         var fi = new FileInfo(filename);
         filename = fi.FullName;
 
-        Spinner.IsVisible = true;
-        await Task.Delay(1);
         if (_bitmap != null) {
             _bitmap.Dispose();
             _bitmap = null;
         }
 
         try {
-            await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
-            if (SupportedByBitmap.Contains(fi.Extension.ToLower())) {
-                _bitmap = await Task.Run(() => new Bitmap(fs));
+            var fromCache = false;
+            var tfn = GetThumbnailFilename(filename);
+            if (Mode == Modes.Grid && File.Exists(tfn)) {
+                await using var tFs = new FileStream(tfn, FileMode.Open, FileAccess.Read, FileShare.Read);
+                _bitmap = await Task.Run(() => new Bitmap(tFs));
+                fromCache = true;
             } else {
-                var tempImage = await SixLabors.ImageSharp.Image.LoadAsync(fs);
-                using var ms = new MemoryStream();
-                await Task.Run(() => tempImage.SaveAsPng(ms));
-                ms.Seek(0, SeekOrigin.Begin);
-                _bitmap = await Task.Run(() => new Bitmap(ms));
+                await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+                if (SupportedByBitmap.Contains(fi.Extension.ToLower())) {
+                    _bitmap = await Task.Run(() => new Bitmap(fs));
+                } else {
+                    using var tempImage = await SixLabors.ImageSharp.Image.LoadAsync(fs);
+                    using var ms = new MemoryStream();
+                    await Task.Run(() => tempImage.SaveAsPng(ms));
+                    ms.Seek(0, SeekOrigin.Begin);
+                    _bitmap = await Task.Run(() => new Bitmap(ms));
+                }
             }
 
             if (Mode == Modes.Image) {
@@ -97,7 +126,10 @@ public partial class ImageControl : UserControl
                 await SetZoomedBitmap();
             } else {
                 var ratio = _bitmap.Size.Width / _bitmap.Size.Height;
-                Image.Source = await Task.Run(() => _bitmap.CreateScaledBitmap(new PixelSize(800, (int)Math.Round(800 / ratio, 0)), ResizeQuality));
+                var scaled = _bitmap.CreateScaledBitmap(new PixelSize(800, (int)Math.Round(800 / ratio, 0)), ResizeQuality);
+                Image.Source = await Task.Run(() => scaled);
+                if (!fromCache)
+                    await Task.Run(async () => await SaveThumbnail(tfn, scaled));
 
                 _bitmap.Dispose();
                 _bitmap = null;
@@ -111,6 +143,7 @@ public partial class ImageControl : UserControl
             Filename = filename;
             Spinner.IsVisible = false;
             _bitmapSemaphore.Release();
+            GlobalBitmapSemaphore.Release();
         }
         return true;
     }
@@ -166,5 +199,40 @@ public partial class ImageControl : UserControl
 
         iBmp?.Dispose();
         Image.UpdateLayout();
+    }
+
+    private string GetThumbnailFilename(string filename)
+    {
+        var file = Path.GetFileName(filename);
+        var dir = Path.GetDirectoryName(filename);
+        if (!string.IsNullOrEmpty(dir))
+            return Path.Combine(App.ThumbnailsPath, GetMd5(dir), GetMd5(file));
+        return Path.Combine(App.ThumbnailsPath, GetMd5(file));
+    }
+
+    private async Task SaveThumbnail(string filename, Bitmap image)
+    {
+        var dir = Path.GetDirectoryName(filename);
+        if (string.IsNullOrEmpty(dir))
+            return;
+
+        if (!Directory.Exists(dir))
+            Directory.CreateDirectory(dir);
+        await using var fs = new FileStream(filename, FileMode.Create, FileAccess.Write);
+
+        using var ms = new MemoryStream();
+        image.Save(ms);
+        ms.Seek(0, SeekOrigin.Begin);
+
+        using var tempImage = await SixLabors.ImageSharp.Image.LoadAsync(ms);
+        await tempImage.SaveAsJpegAsync(fs);
+    }
+
+    private string GetMd5(string input)
+    {
+        var inputBytes = System.Text.Encoding.ASCII.GetBytes(input);
+        var hashBytes = System.Security.Cryptography.MD5.HashData(inputBytes);
+
+        return Convert.ToHexString(hashBytes);
     }
 }

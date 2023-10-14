@@ -19,7 +19,8 @@
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <controls:ImageControl Mode="Grid"/>
+                        <controls:ImageControl Mode="Grid"
+                                               SpinnerFontSize="30"/>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>
