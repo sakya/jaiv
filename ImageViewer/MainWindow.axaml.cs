@@ -305,4 +305,9 @@ public partial class MainWindow : Window
             }
         }
     }
+
+    private async void OnListOpenImage(object sender, ImageListControl.OpenImageArgs e)
+    {
+        await LoadImage(e.Filename);
+    }
 }

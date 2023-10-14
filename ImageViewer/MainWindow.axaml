@@ -87,6 +87,7 @@
                 <controls:ImageListControl
                     Name="ImageListControl"
                     IsVisible="{Binding ShowFolder}"
+                    OpenImage="OnListOpenImage"
                     Grid.Row="1"/>
             </Grid>
         </DockPanel>

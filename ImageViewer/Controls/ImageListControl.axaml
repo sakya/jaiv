@@ -21,7 +21,8 @@
                     <DataTemplate>
                         <Border CornerRadius="5"
                                 Padding="5"
-                                Tapped="OnItemTapped">
+                                Tapped="OnItemTapped"
+                                DoubleTapped="OnItemDoubleTapped">
                             <Grid ClipToBounds="True">
                                 <Grid.RowDefinitions>*, Auto</Grid.RowDefinitions>
                                 <controls:ImageControl Mode="Grid"
