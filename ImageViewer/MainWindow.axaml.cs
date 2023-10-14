@@ -86,6 +86,7 @@ public partial class MainWindow : Window
     {
         try {
             _model.Filename = $"Jaiv [{Path.GetFileName(filename)}]";
+            _model.ShowFolder = false;
             await ImageControl.LoadImage(filename);
             _model.DisplayingImage = true;
             _model.GridViewEnabled = true;
@@ -295,8 +296,7 @@ public partial class MainWindow : Window
                 return;
 
             ImageListControl.SetPath(dir);
-            _model.ShowFolder = btn.IsChecked == true;
-            if (_model.ShowFolder) {
+            if (btn.IsChecked == true) {
                 _model.DisplayingImage = false;
             } else {
                 _model.DisplayingImage = !string.IsNullOrEmpty(ImageControl.Filename);
