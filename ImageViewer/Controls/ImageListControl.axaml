@@ -5,6 +5,11 @@
              xmlns:controls="clr-namespace:ImageViewer.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ImageViewer.Controls.ImageListControl">
+    <UserControl.Styles>
+        <Style Selector="Border">
+            <Setter Property="Background" Value="#28000000" />
+        </Style>
+    </UserControl.Styles>
     <Grid>
         <ScrollViewer Name="ScrollViewer"
                       Focusable="False"
@@ -14,13 +19,21 @@
                            ElementClearing="OnElementClearing">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout Orientation="Horizontal" ItemsStretch="Uniform"
-                                       MinItemHeight="200" MinItemWidth="200"
+                                       MinItemHeight="250" MinItemWidth="250"
                                        MinColumnSpacing="10" MinRowSpacing="10"/>
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
-                        <controls:ImageControl Mode="Grid"
-                                               SpinnerFontSize="30"/>
+                        <Border CornerRadius="5"
+                                Padding="5">
+                            <Grid>
+                                <Grid.RowDefinitions>*, Auto</Grid.RowDefinitions>
+                                <controls:ImageControl Mode="Grid"
+                                                       SpinnerFontSize="30"/>
+                                <TextBlock Grid.Row="1"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

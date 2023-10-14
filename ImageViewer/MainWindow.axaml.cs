@@ -88,6 +88,7 @@ public partial class MainWindow : Window
             _model.Filename = $"Jaiv [{Path.GetFileName(filename)}]";
             await ImageControl.LoadImage(filename);
             _model.DisplayingImage = true;
+            _model.GridViewEnabled = true;
             _model.Zoom = ImageControl.Zoom;
         } catch {
             // ignored
@@ -295,6 +296,11 @@ public partial class MainWindow : Window
 
             ImageListControl.SetPath(dir);
             _model.ShowFolder = btn.IsChecked == true;
+            if (_model.ShowFolder) {
+                _model.DisplayingImage = false;
+            } else {
+                _model.DisplayingImage = !string.IsNullOrEmpty(ImageControl.Filename);
+            }
         }
     }
 }

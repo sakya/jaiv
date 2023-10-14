@@ -16,6 +16,13 @@ public class MainWindowModel : BaseModel
         set => SetField(ref _displayingImage, value);
     }
 
+    private bool _gridViewEnabled;
+    public bool GridViewEnabled
+    {
+        get => _gridViewEnabled;
+        set => SetField(ref _gridViewEnabled, value);
+    }
+
     private double _zoom;
     public double Zoom
     {

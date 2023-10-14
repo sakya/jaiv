@@ -46,7 +46,7 @@
                         </Button>
 
                         <ToggleButton IsCheckedChanged="OnGridViewIsCheckedChanged" ToolTip.Tip="Toggle grid view"
-                                      IsEnabled="{Binding DisplayingImage}"
+                                      IsEnabled="{Binding GridViewEnabled}"
                                       Margin="5,0,0,0">
                             <i:Icon FontSize="21" Value="mdi-view-grid" />
                         </ToggleButton>

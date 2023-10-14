@@ -103,9 +103,15 @@ public partial class ImageControl : UserControl
             var tfn = GetThumbnailFilename(filename);
             if (Mode == Modes.Grid && File.Exists(tfn)) {
                 await using var tFs = new FileStream(tfn, FileMode.Open, FileAccess.Read, FileShare.Read);
-                _bitmap = await Task.Run(() => new Bitmap(tFs));
-                fromCache = true;
-            } else {
+                try {
+                    _bitmap = await Task.Run(() => new Bitmap(tFs));
+                    fromCache = true;
+                } catch {
+                    // ignored
+                }
+            }
+
+            if (_bitmap == null) {
                 await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
                 if (SupportedByBitmap.Contains(fi.Extension.ToLower())) {
                     _bitmap = await Task.Run(() => new Bitmap(fs));

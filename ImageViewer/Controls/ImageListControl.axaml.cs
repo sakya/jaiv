@@ -36,18 +36,20 @@ public partial class ImageListControl : UserControl
 
     private async void OnElementPrepared(object? sender, ItemsRepeaterElementPreparedEventArgs e)
     {
-        if (e.Element is ImageControl img) {
-            var f = img.DataContext as string;
-            if (!string.IsNullOrEmpty(f)) {
+        if (e.Element is Border { Child: Grid grid }) {
+            var f = grid.DataContext as string;
+            if (grid.Children[0] is ImageControl img && !string.IsNullOrEmpty(f))
                 await img.LoadImage(f);
-            }
+            if (grid.Children[1] is TextBlock txt)
+                txt.Text = Path.GetFileName(f);
         }
     }
 
     private async void OnElementClearing(object? sender, ItemsRepeaterElementClearingEventArgs e)
     {
-        if (e.Element is ImageControl img) {
-            await img.Clear();
+        if (e.Element is Border { Child: Grid grid }) {
+            if (grid.Children[0] is ImageControl img)
+                await img.Clear();
         }
     }
 }
