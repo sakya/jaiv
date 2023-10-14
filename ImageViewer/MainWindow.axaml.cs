@@ -10,6 +10,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using ImageViewer.Controls;
+using ImageViewer.Utils;
 using ImageViewer.ViewModels;
 
 namespace ImageViewer;
@@ -201,6 +202,7 @@ public partial class MainWindow : Window
         var res = new List<string>();
 
         var files = Directory.GetFiles(path);
+        Array.Sort(files, new NaturalComparer());
         foreach (var file in files) {
             var ext = Path.GetExtension(file).ToLower();
             if (ImageControl.SupportedFiles.Contains(ext)) {
@@ -295,7 +297,7 @@ public partial class MainWindow : Window
             if (string.IsNullOrEmpty(dir))
                 return;
 
-            ImageListControl.SetPath(dir);
+            ImageListControl.SetPath(dir, ImageControl.Filename);
             if (btn.IsChecked == true) {
                 _model.DisplayingImage = false;
             } else {
