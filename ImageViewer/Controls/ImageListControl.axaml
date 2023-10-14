@@ -5,11 +5,6 @@
              xmlns:controls="clr-namespace:ImageViewer.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ImageViewer.Controls.ImageListControl">
-    <UserControl.Styles>
-        <Style Selector="Border">
-            <Setter Property="Background" Value="#28000000" />
-        </Style>
-    </UserControl.Styles>
     <Grid>
         <ScrollViewer Name="ScrollViewer"
                       Focusable="False"
@@ -25,8 +20,9 @@
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate>
                         <Border CornerRadius="5"
-                                Padding="5">
-                            <Grid>
+                                Padding="5"
+                                Tapped="OnItemTapped">
+                            <Grid ClipToBounds="True">
                                 <Grid.RowDefinitions>*, Auto</Grid.RowDefinitions>
                                 <controls:ImageControl Mode="Grid"
                                                        SpinnerFontSize="30"/>
