@@ -153,10 +153,10 @@ public partial class ImageListControl : UserControl
             SetSelectedItemStyle(border, selected);
 
             var f = border.DataContext as string;
-            if (grid.Children[0] is ImageControl img && !string.IsNullOrEmpty(f))
-                await img.LoadImage(f);
             if (grid.Children[1] is TextBlock txt)
                 txt.Text = Path.GetFileName(f);
+            if (grid.Children[0] is ImageControl img && !string.IsNullOrEmpty(f))
+                await img.LoadImage(f);
         }
     }
 
@@ -164,6 +164,8 @@ public partial class ImageListControl : UserControl
     {
         if (e.Element is Border { Child: Grid grid } border) {
             SetSelectedItemStyle(border, false);
+            if (grid.Children[1] is TextBlock txt)
+                txt.Text = null;
             if (grid.Children[0] is ImageControl img)
                 await img.Clear();
         }
