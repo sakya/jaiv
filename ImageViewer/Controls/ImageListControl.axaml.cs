@@ -47,6 +47,51 @@ public partial class ImageListControl : UserControl
         _selectedControl = null;
     }
 
+    public async void OnKeyDown(object? sender, KeyEventArgs e)
+    {
+        switch (e.Key) {
+            case Key.Home:
+                e.Handled = true;
+                if (_selectedIndex > 0) {
+                    _selectedIndex = 0;
+                    _selectedFile = _files[_selectedIndex.Value];
+                    BringIntoViewSelectedFile();
+                }
+                break;
+            case Key.End:
+                e.Handled = true;
+                if (_selectedIndex < _files.Count - 1) {
+                    _selectedIndex = _files.Count - 1;
+                    _selectedFile = _files[_selectedIndex.Value];
+                    BringIntoViewSelectedFile();
+                }
+                break;
+            case Key.Left:
+                e.Handled = true;
+                if (_selectedIndex > 0) {
+                    _selectedIndex--;
+                    _selectedFile = _files[_selectedIndex.Value];
+                    BringIntoViewSelectedFile();
+                }
+                break;
+            case Key.Right:
+                e.Handled = true;
+                if (_selectedIndex < _files.Count - 1) {
+                    _selectedIndex++;
+                    _selectedFile = _files[_selectedIndex.Value];
+                    BringIntoViewSelectedFile();
+                }
+                break;
+            case Key.Return:
+                e.Handled = true;
+                OpenImage?.Invoke(this, new OpenImageArgs()
+                {
+                    Filename = _selectedFile
+                });
+                break;
+        }
+    }
+
     private void LoadImages(string path, string? selectedFile = null)
     {
         _files.Clear();
@@ -82,6 +127,7 @@ public partial class ImageListControl : UserControl
         if (ctrl == null)
             ctrl = WrapPanel.GetOrCreateElement(_selectedIndex.Value) as Border;
         if (ctrl != null) {
+            SetSelectedItemStyle(ctrl, true);
             WrapPanel.UpdateLayout();
             ctrl.BringIntoView();
         }

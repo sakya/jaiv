@@ -30,7 +30,9 @@ public partial class MainWindow : Window
 
     private async void OnKeyDown(object? sender, KeyEventArgs e)
     {
-        if (!_model.ShowFolder) {
+        if (_model.ShowFolder) {
+            ImageListControl.OnKeyDown(sender, e);
+        } else {
             switch (e.Key) {
                 case Key.O:
                     e.Handled = true;
