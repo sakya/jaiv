@@ -47,7 +47,7 @@ public partial class ImageListControl : UserControl
         _selectedControl = null;
     }
 
-    public async void OnKeyDown(object? sender, KeyEventArgs e)
+    public void OnKeyDown(object? sender, KeyEventArgs e)
     {
         switch (e.Key) {
             case Key.Home:
@@ -84,10 +84,12 @@ public partial class ImageListControl : UserControl
                 break;
             case Key.Return:
                 e.Handled = true;
-                OpenImage?.Invoke(this, new OpenImageArgs()
-                {
-                    Filename = _selectedFile
-                });
+                if (!string.IsNullOrEmpty(_selectedFile)) {
+                    OpenImage?.Invoke(this, new OpenImageArgs()
+                    {
+                        Filename = _selectedFile
+                    });
+                }
                 break;
         }
     }
