@@ -28,6 +28,8 @@
                                 <controls:ImageControl Mode="Grid"
                                                        SpinnerFontSize="30"/>
                                 <TextBlock Grid.Row="1"
+                                           FontWeight="Light"
+                                           Margin="0,5,0,0"
                                            TextTrimming="CharacterEllipsis"/>
                             </Grid>
                         </Border>

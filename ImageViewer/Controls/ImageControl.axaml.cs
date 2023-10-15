@@ -81,12 +81,12 @@ public partial class ImageControl : UserControl
         if (!File.Exists(filename))
             return;
 
+        var iBmp = Image.Source as Bitmap;
+        Image.Source = null;
         if (ShowSpinner)
             Spinner.IsVisible = true;
         await Task.Delay(1);
-        if (Image.Source is Bitmap iBmp)
-            iBmp.Dispose();
-        Image.Source = null;
+        iBmp?.Dispose();
 
         await GlobalBitmapSemaphore.WaitAsync();
         await _bitmapSemaphore.WaitAsync();
