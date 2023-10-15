@@ -76,10 +76,10 @@ public partial class ImageControl : UserControl
 
     public string? Filename { get; private set; }
 
-    public async Task<bool> LoadImage(string filename)
+    public async Task LoadImage(string filename)
     {
         if (!File.Exists(filename))
-            return false;
+            return;
 
         if (ShowSpinner)
             Spinner.IsVisible = true;
@@ -102,12 +102,15 @@ public partial class ImageControl : UserControl
             var fromCache = false;
             var tfn = GetThumbnailFilename(filename);
             if (Mode == Modes.Grid && File.Exists(tfn)) {
-                await using var tFs = new FileStream(tfn, FileMode.Open, FileAccess.Read, FileShare.Read);
-                try {
-                    _bitmap = await Task.Run(() => new Bitmap(tFs));
-                    fromCache = true;
-                } catch {
-                    // ignored
+                var cfi = new FileInfo(tfn);
+                if (cfi.LastWriteTimeUtc > fi.LastWriteTimeUtc) {
+                    await using var tFs = new FileStream(tfn, FileMode.Open, FileAccess.Read, FileShare.Read);
+                    try {
+                        _bitmap = await Task.Run(() => new Bitmap(tFs));
+                        fromCache = true;
+                    } catch {
+                        // ignored
+                    }
                 }
             }
 
@@ -151,7 +154,6 @@ public partial class ImageControl : UserControl
             _bitmapSemaphore.Release();
             GlobalBitmapSemaphore.Release();
         }
-        return true;
     }
 
     public async Task Clear()
