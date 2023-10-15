@@ -293,14 +293,14 @@ public partial class MainWindow : Window
     private void OnGridViewIsCheckedChanged(object? sender, RoutedEventArgs e)
     {
         if (sender is ToggleButton btn) {
-            var dir = Path.GetDirectoryName(ImageControl.Filename);
-            if (string.IsNullOrEmpty(dir))
-                return;
-
-            ImageListControl.SetPath(dir, ImageControl.Filename);
             if (btn.IsChecked == true) {
+                var dir = Path.GetDirectoryName(ImageControl.Filename);
+                if (string.IsNullOrEmpty(dir))
+                    return;
+                ImageListControl.SetPath(dir, ImageControl.Filename);
                 _model.DisplayingImage = false;
             } else {
+                ImageListControl.Clear();
                 _model.DisplayingImage = !string.IsNullOrEmpty(ImageControl.Filename);
             }
         }

@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
+using Avalonia.Threading;
 using ImageViewer.Utils;
 
 namespace ImageViewer.Controls;
 
 public partial class ImageListControl : UserControl
 {
-    private List<string> _files = new();
+    private readonly ObservableCollection<string> _files = new();
     private int? _selectedIndex;
     private string? _selectedFile;
     private Border? _selectedControl;
@@ -28,18 +30,27 @@ public partial class ImageListControl : UserControl
     public ImageListControl()
     {
         InitializeComponent();
+        WrapPanel.ItemsSource = _files;
     }
 
     public void SetPath(string path, string? selectedFile = null)
     {
-        WrapPanel.ItemsSource = null;
+        _files.Clear();
         ScrollViewer.ScrollToHome();
         LoadImages(path, selectedFile);
     }
 
+    public void Clear()
+    {
+        _files.Clear();
+        _selectedIndex = null;
+        _selectedFile = null;
+        _selectedControl = null;
+    }
+
     private void LoadImages(string path, string? selectedFile = null)
     {
-        _files = new List<string>();
+        _files.Clear();
         var files = Directory.GetFiles(path);
         Array.Sort(files, new NaturalComparer());
         foreach (var file in files) {
@@ -59,14 +70,15 @@ public partial class ImageListControl : UserControl
             _selectedFile = _selectedIndex != null ? _files[_selectedIndex.Value] : null;
         }
 
-        WrapPanel.ItemsSource = _files;
-        BringIntoViewSelectedFile();
+        Dispatcher.UIThread.InvokeAsync(BringIntoViewSelectedFile, DispatcherPriority.Background);
     }
 
     private void BringIntoViewSelectedFile()
     {
         if (_selectedIndex == null)
             return;
+
+        WrapPanel.UpdateLayout();
         var ctrl = WrapPanel.TryGetElement(_selectedIndex.Value) as Border;
         if (ctrl == null)
             ctrl = WrapPanel.GetOrCreateElement(_selectedIndex.Value) as Border;
@@ -93,7 +105,7 @@ public partial class ImageListControl : UserControl
             var selected = e.Index == _selectedIndex;
             SetSelectedItemStyle(border, selected);
 
-            var f = grid.DataContext as string;
+            var f = border.DataContext as string;
             if (grid.Children[0] is ImageControl img && !string.IsNullOrEmpty(f))
                 await img.LoadImage(f);
             if (grid.Children[1] is TextBlock txt)
