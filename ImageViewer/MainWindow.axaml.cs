@@ -25,7 +25,8 @@ public partial class MainWindow : Window
         InitializeComponent();
 
         DataContext = _model;
-        KeyDown += OnKeyDown;
+
+        AddHandler(KeyDownEvent, OnKeyDown, RoutingStrategies.Tunnel);
     }
 
     private async void OnKeyDown(object? sender, KeyEventArgs e)
@@ -66,7 +67,6 @@ public partial class MainWindow : Window
                         e.Handled = true;
                         ToggleFullscreen();
                     }
-
                     break;
 
                 case Key.OemPlus:
