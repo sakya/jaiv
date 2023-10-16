@@ -20,7 +20,7 @@
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.4"/>
 
         <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
-        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="8.2.0" />
+        <PackageReference Include="Projektanker.Icons.Avalonia.MaterialDesign" Version="8.3.0" />
     </ItemGroup>
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
