@@ -101,20 +101,23 @@ public partial class ImageControl : UserControl
         try {
             var fromCache = false;
             var tfn = GetThumbnailFilename(filename);
-            if (Mode == Modes.Grid && File.Exists(tfn)) {
+            if (File.Exists(tfn)) {
                 var cfi = new FileInfo(tfn);
                 if (cfi.LastWriteTimeUtc > fi.LastWriteTimeUtc) {
                     await using var tFs = new FileStream(tfn, FileMode.Open, FileAccess.Read, FileShare.Read);
                     try {
                         _bitmap = await Task.Run(() => new Bitmap(tFs));
                         fromCache = true;
+                        if (Mode == Modes.Image) {
+                            await SetBitmap(fromCache, tfn);
+                        }
                     } catch {
                         // ignored
                     }
                 }
             }
 
-            if (_bitmap == null) {
+            if (_bitmap == null || Mode == Modes.Image) {
                 await using var fs = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
                 if (SupportedByBitmap.Contains(fi.Extension.ToLower())) {
                     _bitmap = await Task.Run(() => new Bitmap(fs));
@@ -127,22 +130,7 @@ public partial class ImageControl : UserControl
                 }
             }
 
-            if (Mode == Modes.Image) {
-                Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
-                if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
-                    Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
-
-                await SetZoomedBitmap();
-            } else {
-                var ratio = _bitmap.Size.Width / _bitmap.Size.Height;
-                var scaled = _bitmap.CreateScaledBitmap(new PixelSize(800, (int)Math.Round(800 / ratio, 0)), ResizeQuality);
-                Image.Source = await Task.Run(() => scaled);
-                if (!fromCache)
-                    await Task.Run(async () => await SaveThumbnail(tfn, scaled));
-
-                _bitmap.Dispose();
-                _bitmap = null;
-            }
+            await SetBitmap(fromCache, tfn);
         } catch {
             if (Image.Source is Bitmap bmp)
                 bmp.Dispose();
@@ -193,6 +181,30 @@ public partial class ImageControl : UserControl
             Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
 
         await SetZoomedBitmap();
+    }
+
+    private async Task SetBitmap(bool fromCache, string thumbnailFilename)
+    {
+        if (_bitmap == null)
+            return;
+
+        if (Mode == Modes.Image) {
+            Zoom = ScrollViewer.Bounds.Width / _bitmap.Size.Width;
+            if (_bitmap.Size.Height * Zoom > ScrollViewer.Bounds.Height)
+                Zoom = ScrollViewer.Bounds.Height / _bitmap.Size.Height;
+
+            await SetZoomedBitmap();
+        } else {
+            var ratio = _bitmap.Size.Width / _bitmap.Size.Height;
+            var scaled =
+                _bitmap.CreateScaledBitmap(new PixelSize(800, (int)Math.Round(800 / ratio, 0)), ResizeQuality);
+            Image.Source = await Task.Run(() => scaled);
+            if (!fromCache)
+                await Task.Run(async () => await SaveThumbnail(thumbnailFilename, scaled));
+
+            _bitmap.Dispose();
+            _bitmap = null;
+        }
     }
 
     private async Task SetZoomedBitmap()
