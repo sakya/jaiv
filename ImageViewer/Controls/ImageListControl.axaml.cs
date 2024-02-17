@@ -86,7 +86,7 @@ public partial class ImageListControl : UserControl
                 break;
             case Key.Return:
                 e.Handled = true;
-                if (!string.IsNullOrEmpty(_selectedFile)) {
+                if (!string.IsNullOrEmpty(_selectedFile) && _selectedIndex.HasValue) {
                     OpenImage?.Invoke(this, new OpenImageArgs()
                     {
                         Filename = _selectedFile,
@@ -184,7 +184,7 @@ public partial class ImageListControl : UserControl
 
     private void OnItemDoubleTapped(object? sender, TappedEventArgs e)
     {
-        if (sender is Border && !string.IsNullOrEmpty(_selectedFile)) {
+        if (sender is Border && !string.IsNullOrEmpty(_selectedFile) && _selectedIndex.HasValue) {
             OpenImage?.Invoke(this, new OpenImageArgs()
             {
                 Filename = _selectedFile,
