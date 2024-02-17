@@ -85,10 +85,10 @@ public partial class MainWindow : Window
         }
     }
 
-    private async Task LoadImage(string filename)
+    private async Task LoadImage(string filename, int index, int count)
     {
         try {
-            _model.Filename = $"Jaiv [{Path.GetFileName(filename)}]";
+            _model.Filename = $"Jaiv [{Path.GetFileName(filename)} {index + 1}/{count}]";
             _model.ShowFolder = false;
             await ImageControl.LoadImage(filename);
             _model.DisplayingImage = true;
@@ -144,7 +144,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx >= 0 && idx + 1 < files.Count) {
-            await LoadImage(files[idx + 1]);
+            await LoadImage(files[idx + 1], idx + 1, files.Count);
         }
     }
 
@@ -161,7 +161,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx > 0) {
-            await LoadImage(files[idx - 1]);
+            await LoadImage(files[idx - 1],idx - 1, files.Count);
         }
     }
 
@@ -178,7 +178,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx > 0) {
-            await LoadImage(files[0]);
+            await LoadImage(files[0], 0, files.Count);
         }
     }
 
@@ -195,7 +195,7 @@ public partial class MainWindow : Window
         var files = GetImages(dir);
         var idx = files.IndexOf(filename);
         if (idx < files.Count - 1) {
-            await LoadImage(files[files.Count - 1]);
+            await LoadImage(files[files.Count - 1], files.Count - 1, files.Count);
         }
     }
 
@@ -253,7 +253,9 @@ public partial class MainWindow : Window
         var files = await StorageProvider.OpenFilePickerAsync(opt);
 
         if (files.Count > 0) {
-            await LoadImage(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
+            var fi = new FileInfo(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
+            var images = Common.ListImages(fi.DirectoryName);
+            await LoadImage(fi.FullName, images.IndexOf(fi.FullName), images.Count);
         }
     }
 
@@ -310,6 +312,6 @@ public partial class MainWindow : Window
 
     private async void OnListOpenImage(object sender, ImageListControl.OpenImageArgs e)
     {
-        await LoadImage(e.Filename);
+        await LoadImage(e.Filename, e.Index, e.Count);
     }
 }

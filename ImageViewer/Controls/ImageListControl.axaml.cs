@@ -20,6 +20,8 @@ public partial class ImageListControl : UserControl
     public class OpenImageArgs : EventArgs
     {
         public string Filename { get; set; } = null!;
+        public int Index { get; set; }
+        public int Count { get; set; }
     }
 
     public delegate void OpenImageHandler(object sender, OpenImageArgs e);
@@ -87,7 +89,9 @@ public partial class ImageListControl : UserControl
                 if (!string.IsNullOrEmpty(_selectedFile)) {
                     OpenImage?.Invoke(this, new OpenImageArgs()
                     {
-                        Filename = _selectedFile
+                        Filename = _selectedFile,
+                        Index = _selectedIndex.Value,
+                        Count = _files.Count
                     });
                 }
                 break;
@@ -97,13 +101,8 @@ public partial class ImageListControl : UserControl
     private void LoadImages(string path, string? selectedFile = null)
     {
         _files.Clear();
-        var files = Directory.GetFiles(path);
-        Array.Sort(files, new NaturalComparer());
-        foreach (var file in files) {
-            var ext = Path.GetExtension(file).ToLower();
-            if (ImageControl.SupportedFiles.Contains(ext)) {
-                _files.Add(file);
-            }
+        foreach (var file in Common.ListImages(path)) {
+            _files.Add(file);
         }
 
         if (!string.IsNullOrEmpty(selectedFile)) {
@@ -188,7 +187,9 @@ public partial class ImageListControl : UserControl
         if (sender is Border && !string.IsNullOrEmpty(_selectedFile)) {
             OpenImage?.Invoke(this, new OpenImageArgs()
             {
-                Filename = _selectedFile
+                Filename = _selectedFile,
+                Index = _selectedIndex.Value,
+                Count = _files.Count
             });
         }
     }
