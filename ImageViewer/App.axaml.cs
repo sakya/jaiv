@@ -6,7 +6,7 @@ using Avalonia.Markup.Xaml;
 
 namespace ImageViewer;
 
-public partial class App : Application
+public class App : Application
 {
     public static readonly string AppPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "jaiv");
     public static readonly string ThumbnailsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "jaiv", "thumbnails");

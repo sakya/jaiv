@@ -18,7 +18,7 @@ public partial class ImageControl : UserControl
 
     private Bitmap? _bitmap;
     private readonly SemaphoreSlim _bitmapSemaphore = new(1, 1);
-    private static HashSet<string> SupportedByBitmap { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png" };
+    private static HashSet<string> SupportedByBitmap { get; } = [".bmp", ".jpg", ".jpeg", ".png"];
 
     private Modes _mode = Modes.Image;
     public enum Modes
@@ -70,7 +70,7 @@ public partial class ImageControl : UserControl
         set => Spinner.FontSize = value;
     }
 
-    public static HashSet<string> SupportedFiles { get; } = new() { ".bmp", ".jpg", ".jpeg", ".png", ".tiff", ".tga", ".webp" };
+    public static HashSet<string> SupportedFiles { get; } = [".bmp", ".jpg", ".jpeg", ".png", ".tiff", ".tga", ".webp"];
 
     public double Zoom { get; private set; } = 1.0;
 
