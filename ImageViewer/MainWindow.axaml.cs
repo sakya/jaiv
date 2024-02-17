@@ -141,7 +141,7 @@ public partial class MainWindow : Window
         if (string.IsNullOrEmpty(dir))
             return;
 
-        var files = GetImages(dir);
+        var files = Common.ListImages(dir);
         var idx = files.IndexOf(filename);
         if (idx >= 0 && idx + 1 < files.Count) {
             await LoadImage(files[idx + 1], idx + 1, files.Count);
@@ -158,7 +158,7 @@ public partial class MainWindow : Window
         if (string.IsNullOrEmpty(dir))
             return;
 
-        var files = GetImages(dir);
+        var files = Common.ListImages(dir);
         var idx = files.IndexOf(filename);
         if (idx > 0) {
             await LoadImage(files[idx - 1],idx - 1, files.Count);
@@ -175,7 +175,7 @@ public partial class MainWindow : Window
         if (string.IsNullOrEmpty(dir))
             return;
 
-        var files = GetImages(dir);
+        var files = Common.ListImages(dir);
         var idx = files.IndexOf(filename);
         if (idx > 0) {
             await LoadImage(files[0], 0, files.Count);
@@ -192,27 +192,11 @@ public partial class MainWindow : Window
         if (string.IsNullOrEmpty(dir))
             return;
 
-        var files = GetImages(dir);
+        var files = Common.ListImages(dir);
         var idx = files.IndexOf(filename);
         if (idx < files.Count - 1) {
             await LoadImage(files[files.Count - 1], files.Count - 1, files.Count);
         }
-    }
-
-    private List<string> GetImages(string path)
-    {
-        var res = new List<string>();
-
-        var files = Directory.GetFiles(path);
-        Array.Sort(files, new NaturalComparer());
-        foreach (var file in files) {
-            var ext = Path.GetExtension(file).ToLower();
-            if (ImageControl.SupportedFiles.Contains(ext)) {
-                res.Add(file);
-            }
-        }
-
-        return res;
     }
 
     private void ToggleFullscreen()
@@ -251,7 +235,6 @@ public partial class MainWindow : Window
         };
 
         var files = await StorageProvider.OpenFilePickerAsync(opt);
-
         if (files.Count > 0) {
             var fi = new FileInfo(HttpUtility.UrlDecode(files[0].Path.AbsolutePath));
             var images = Common.ListImages(fi.DirectoryName);

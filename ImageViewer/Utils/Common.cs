@@ -10,7 +10,7 @@ public static class Common
     public static List<string> ListImages(string? path)
     {
         var res = new List<string>();
-        if (string.IsNullOrEmpty(path))
+        if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
             return res;
 
         var files = Directory.GetFiles(path);
