@@ -60,6 +60,13 @@ public partial class ImageControl : UserControl
         }
     }
 
+    protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
+    {
+        base.OnApplyTemplate(e);
+        if (Mode == Modes.Grid)
+            SpinnerBorder.Background = new SolidColorBrush(App.GetStyleColor("SystemBaseHighColor") ?? Colors.Black, 0.3);
+    }
+
     public bool ShowSpinner
     {
         get;
