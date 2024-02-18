@@ -33,7 +33,6 @@ public partial class ImageControl : UserControl
         ResizeQuality = BitmapInterpolationMode.HighQuality;
         Mode = Modes.Image;
         ShowSpinner = true;
-        SpinnerBorder.Background = new SolidColorBrush(App.GetStyleColor("SystemAltHighColor") ?? Colors.Black, 0.3);
     }
 
     public BitmapInterpolationMode ResizeQuality
@@ -52,9 +51,11 @@ public partial class ImageControl : UserControl
                 Image.Stretch = Stretch.Uniform;
                 ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
                 ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
+                SpinnerBorder.Background = new SolidColorBrush(Colors.Transparent);
             } else {
                 ScrollViewer.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
                 ScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+                SpinnerBorder.Background = new SolidColorBrush(App.GetStyleColor("SystemAltHighColor") ?? Colors.Black, 0.3);
             }
         }
     }
