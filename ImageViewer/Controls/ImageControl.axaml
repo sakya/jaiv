@@ -15,12 +15,14 @@
                    VerticalAlignment="Center" />
         </ScrollViewer>
 
-        <i:Icon Value="mdi-progress-helper"
-                Name="Spinner"
-                IsVisible="False"
-                FontSize="48"
-                Animation="Spin"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"/>
+        <Border Name="SpinnerBorder"
+                IsVisible="False">
+            <i:Icon Value="mdi-progress-helper"
+                    Name="Spinner"
+                    FontSize="48"
+                    Animation="Spin"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"/>
+        </Border>
     </Grid>
 </UserControl>

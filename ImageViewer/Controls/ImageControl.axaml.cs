@@ -33,6 +33,7 @@ public partial class ImageControl : UserControl
         ResizeQuality = BitmapInterpolationMode.HighQuality;
         Mode = Modes.Image;
         ShowSpinner = true;
+        SpinnerBorder.Background = new SolidColorBrush(App.GetStyleColor("SystemAltHighColor") ?? Colors.Black, 0.3);
     }
 
     public BitmapInterpolationMode ResizeQuality
@@ -84,7 +85,7 @@ public partial class ImageControl : UserControl
         var iBmp = Image.Source as Bitmap;
         Image.Source = null;
         if (ShowSpinner)
-            Spinner.IsVisible = true;
+            SpinnerBorder.IsVisible = true;
         await Task.Delay(1);
         iBmp?.Dispose();
 
@@ -138,7 +139,7 @@ public partial class ImageControl : UserControl
             throw;
         } finally {
             Filename = filename;
-            Spinner.IsVisible = false;
+            SpinnerBorder.IsVisible = false;
             _bitmapSemaphore.Release();
             GlobalBitmapSemaphore.Release();
         }
